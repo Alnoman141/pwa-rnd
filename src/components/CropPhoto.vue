@@ -7,7 +7,7 @@
       @change="change"
       ref="cropper"
     ></cropper>
-    <img v-if="cropedPhoto" class="cropper" :src="cropedPhoto" />
+    <img v-if="cropedPhoto" class="cropper" :src="cropedPhoto" height="150px" />
     <div class="btn-group">
       <b-button
           type="is-link"
@@ -27,6 +27,7 @@
 
 <script>
 import { Cropper } from "vue-advanced-cropper";
+import axios from "axios";
 export default {
   components: {
     Cropper,
@@ -61,12 +62,18 @@ export default {
       this.cropedPhoto = canvas.toDataURL();
     },
     send(){
-      let data = {
-        capturedPhotos: this.capturedPhotos,
-        cropedPhoto: this.cropedPhoto,
-      }
+      let image = this.cropedPhoto;
+      // let data = {
+      //   capturedPhotos: this.capturedPhotos,
+      //   cropedPhoto: this.cropedPhoto,
+      // }
 
-      console.log(data);
+      axios.post("http://13.235.242.44/api/v1/ocr", {image}).then((response) => {
+        console.log('response =>',response.data);
+        alert(response.data.text);
+      }).catch((error) => {
+        console.log(error);
+      });
     }
   },
 };
@@ -74,7 +81,7 @@ export default {
 
 <style scoped>
 .cropper {
-  height: 600px;
+  /* height: 600px; */
   background: #ddd;
 }
 .btn-group {

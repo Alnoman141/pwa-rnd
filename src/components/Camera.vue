@@ -67,7 +67,6 @@ export default {
       } else {
         ctx.drawImage(video, 0, 0);
       }
-
       ctx.restore();
 
       this.photos.push({
@@ -109,7 +108,7 @@ export default {
 .wrapper {
   background-color: black;
   display: grid;
-  width: 100vw;
+  width: auto;
   /* height: 100vh; */
   grid-template-columns: [left] 90vw [bs] 5vw [es] 5vw [right];
   grid-template-rows: [top] 5vh [bs] 5vh [es] 60vh [middle] 10vh [bottom] 20vh [end];
@@ -118,7 +117,7 @@ export default {
 }
 
 .video {
-  height: 100%;
+  height: auto;
   grid-column: left/right;
   grid-row: top / bottom;
   user-select: none;
@@ -160,12 +159,12 @@ export default {
   grid-row: bottom / end;
 }
 
-.camera-frame {
+/* .camera-frame {
   width: 100vw;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
+} */
 </style>
