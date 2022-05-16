@@ -1,6 +1,6 @@
 <template>
   <div class="photo">
-    <input type="radio" id="checkbox" name="photo" @change="getSelectedImage">
+    <input type="radio" id="checkbox" name="photo" @change="getSelectedPhoto">
     <img :src="src" />
   </div>
 </template>
@@ -14,13 +14,8 @@ export default {
     },
   },
   methods: {
-    getSelectedImage() {
-      this.$router.push({
-        name: 'crop-photo',
-        params: {
-          src: this.src,
-        }
-      });
+    getSelectedPhoto() {
+      this.$store.dispatch('getSelectedPhoto', this.src);
     },
   }
 };

@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper">
+  <div class="wrapper camera-frame">
     <video
       class="video"
       :class="facingMode === 'user' ? 'front' : ''"
@@ -21,7 +21,7 @@
       </button>
     </div>
     <photos-gallery class="gallery" :photos="photos" />
-    <button class="button is-rounded is-outlined" >Crop</button>
+    <button class="button is-rounded is-outlined" @click="cropSelectedPhoto">Crop</button>
   </div>
 </template>
 
@@ -86,6 +86,10 @@ export default {
       );
       this.switchingCamera = false;
     },
+    cropSelectedPhoto(){
+      this.$store.dispatch('getCapturedPhotos', this.photos);
+      this.$router.push('/crop-photo');
+    }
   },
   async mounted() {
     const devices = await navigator.mediaDevices.enumerateDevices();
@@ -154,5 +158,14 @@ export default {
 .gallery {
   grid-column: left / right;
   grid-row: bottom / end;
+}
+
+.camera-frame {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 </style>
