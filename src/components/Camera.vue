@@ -1,11 +1,15 @@
 <template>
   <div class="wrapper camera-frame">
+    <!-- {{ photo }} -->
     <video
+      v-show="!photo"
       class="video"
       :class="facingMode === 'user' ? 'front' : ''"
       ref="video"
     />
-    <canvas style="display: none" ref="canva" />
+    <div v-show="photo">
+      <canvas ref="canva" />
+    </div>
 
     <button
       v-if="videoDevices.length > 1"
@@ -16,24 +20,27 @@
       <b-icon pack="fas" icon="sync-alt" />
     </button>
     <div class="photo-button-container">
-      <button class="button photo-button" @click="TakePhoto">
+      <button class="button photo-button" style="margin-right: 10px" @click="TakePhoto">
         <b-icon pack="fas" icon="camera" />
       </button>
+      <button class="button photo-button" @click="ReTakePhoto">
+        <b-icon pack="fas" icon="sync-alt" />
+      </button>
     </div>
-    <photos-gallery class="gallery" :photos="photos" />
-    <button class="button is-rounded is-outlined" @click="cropSelectedPhoto">Crop</button>
+    <!-- <photos-gallery class="gallery" :photos="photos" />
+    <button class="button is-rounded is-outlined" @click="cropSelectedPhoto">Crop</button> -->
   </div>
 </template>
 
 <script>
-import PhotosGallery from "./PhotosGallery.vue";
+// import PhotosGallery from "./PhotosGallery.vue";
 export default {
   components: {
-    PhotosGallery,
+    // PhotosGallery,
   },
   data() {
     return {
-      photos: [],
+      photo: null,
       mediaStream: null,
       videoDevices: [],
       facingMode: "environment",
@@ -42,6 +49,9 @@ export default {
     };
   },
   methods: {
+    ReTakePhoto(){
+      this.photo = null;
+    },
     async StartRecording(facingMode) {
       this.facingMode = facingMode;
       let video = this.$refs.video;
@@ -51,6 +61,7 @@ export default {
       video.srcObject = this.mediaStream;
       return await video.play();
     },
+
     async TakePhoto() {
       let video = this.$refs.video;
       let canva = this.$refs.canva;
@@ -67,12 +78,13 @@ export default {
       } else {
         ctx.drawImage(video, 0, 0);
       }
-      ctx.restore();
+      this.photo = canva.toDataURL("image/jpeg");
+      // ctx.restore();
 
-      this.photos.push({
-        id: this.counter++,
-        src: canva.toDataURL("image/png"),
-      });
+      // this.photos.push({
+      //   id: this.counter++,
+      //   src: canva.toDataURL("image/png"),
+      // });
     },
     async switchCamera() {
       this.switchingCamera = true;
@@ -90,6 +102,7 @@ export default {
       this.$router.push('/crop-photo');
     }
   },
+
   async mounted() {
     const devices = await navigator.mediaDevices.enumerateDevices();
     this.videoDevices = devices.filter((d) => d.kind === "videoinput");
