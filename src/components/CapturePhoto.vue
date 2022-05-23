@@ -11,6 +11,11 @@
       icon-right="paper-plane"
       @click="send"
     />
+    <canvas id="canvas">
+  <div class="output">
+    <img id="photo" alt="The screen capture will appear in this box.">
+  </div>
+</canvas>
   </div>
 </template>
 
@@ -50,7 +55,8 @@ export default {
             'contentType' : 'application/json'
         },
         success: function(result) {
-            console.log(result);
+            // console.log(result);
+            alert(result);
         },
         error: function ajaxError(jqXHR) {
             alert(jqXHR.responseText);

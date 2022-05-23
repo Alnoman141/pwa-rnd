@@ -51,7 +51,8 @@ export default {
   },
   methods: {
     change({ coordinates, canvas }) {
-      console.log(coordinates, canvas);
+      alert(coordinates, canvas);
+      // console.log(coordinates, canvas);
     },
     crop() {
       const { coordinates, canvas } = this.$refs.cropper.getResult();
@@ -69,10 +70,11 @@ export default {
       // }
 
       axios.post("http://13.235.242.44/api/v1/ocr", {image}).then((response) => {
-        console.log('response =>',response.data);
+        // console.log('response =>',response.data);
         alert(response.data.text);
       }).catch((error) => {
-        console.log(error);
+        // console.log(error);
+        alert(error);
       });
     }
   },
