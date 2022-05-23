@@ -124,6 +124,7 @@ export default {
           'api-key': this.api_key,
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT',
+          'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
         }
       })
     },
