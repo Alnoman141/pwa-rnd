@@ -23,17 +23,18 @@
       <button
         class="button photo-button"
         style="margin-right: 10px"
-        @click="TakePhoto"
-      >
-        <b-icon pack="fas" icon="camera" />
-      </button>
-      <button
-        class="button photo-button"
-        style="margin-right: 10px"
         @click="ReTakePhoto"
       >
         <b-icon pack="fas" icon="sync-alt" />
       </button>
+      <button
+        class="button photo-button"
+        style="margin-right: 10px"
+        @click="TakePhoto"
+      >
+        <b-icon pack="fas" icon="camera" />
+      </button>
+      
       <button class="button photo-button" @click="Send">
         <b-icon pack="fas" icon="paper-plane" />
       </button>
