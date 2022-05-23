@@ -116,14 +116,14 @@ export default {
       this.switchingCamera = false;
     },
     Send() {
-      var formData = new FormData();
-      formData.append("image", this.picture);
+      let formData = new FormData();
+      formData.append("image", this.photo);
       axios.post('https://api.api-ninjas.com/v1/imagetotext', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
           'api-key': this.api_key,
-          'Accept': 'application/json',
-          'Allow-Origin': '*',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT',
         }
       })
     },
