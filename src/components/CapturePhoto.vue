@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <v-easy-camera v-model="picture"> </v-easy-camera>
+      <v-easy-camera v-model="picture" @switchCamera="switchCamera"> </v-easy-camera>
     </div>
     <b-button
       v-if="picture"
@@ -34,6 +34,9 @@ export default {
     };
   },
   methods: {
+    switchCamera(){
+        alert('switchCamera');
+    },
     send() {
     //     console.log(this.picture);
     //   axios.post(`https://api.api-ninjas.com/v1/imagetotext`, { headers: { 'X-Api-Key': this.api_key, 'contentType' : 'application/json'} }, this.picture).then(res => {
