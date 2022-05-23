@@ -21,6 +21,7 @@
     </button>
     <div class="photo-button-container">
       <button
+        v-if="!loading"
         class="button photo-button"
         style="margin-right: 10px"
         @click="ReTakePhoto"
@@ -28,6 +29,7 @@
         <b-icon pack="fas" icon="sync-alt" />
       </button>
       <button
+        v-if="!loading"
         class="button photo-button"
         style="margin-right: 10px"
         @click="TakePhoto"
@@ -35,9 +37,10 @@
         <b-icon pack="fas" icon="camera" />
       </button>
       
-      <button class="button photo-button" @click="Send">
+      <button v-if="photo && !loading" class="button photo-button" @click="Send">
         <b-icon pack="fas" icon="paper-plane" />
       </button>
+      <b-button type="is-dark" v-if="loading" loading>Sending</b-button>
     </div>
     <!-- <photos-gallery class="gallery" :photos="photos" />
     <button class="button is-rounded is-outlined" @click="cropSelectedPhoto">Crop</button> -->
@@ -55,6 +58,7 @@ export default {
   data() {
     return {
       photo: null,
+      loading: false,
       mediaStream: null,
       videoDevices: [],
       facingMode: "environment",
@@ -117,17 +121,26 @@ export default {
       this.switchingCamera = false;
     },
     Send() {
+      this.loading = true;
       let formData = new FormData();
       formData.append("image", this.photo);
       axios.post('https://api.api-ninjas.com/v1/imagetotext', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'api-key': this.api_key,
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT',
-          'Access-Control-Allow-Headers': 'Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With',
+          'X-Api-Key': this.api_key,
         }
-      })
+      }).then(response => {
+        this.loading = false;
+        this.$router.push({
+          name: 'getText',
+          params: {
+            data: response.data
+          }
+        });
+      }).catch(error => {
+        this.loading = false;
+        console.log(error);
+      });
     },
   },
 

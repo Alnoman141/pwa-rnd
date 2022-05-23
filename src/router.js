@@ -3,7 +3,7 @@ import Router from "vue-router";
 import Home from "./components/Home.vue";
 import CropPhoto from "./components/CropPhoto.vue";
 import Camera from "./components/Camera.vue";
-// import CapturePhoto from './components/CapturePhoto.vue';
+import GetText from './components/GetText.vue';
 
 Vue.use(Router);
 
@@ -21,11 +21,11 @@ export default new Router({
       name: 'camera',
       component: Camera
     },
-    // {
-    //   path: '/take-photo',
-    //   name: 'camera',
-    //   component: CapturePhoto
-    // },
+    {
+      path: '/get-text',
+      name: 'getText',
+      component: GetText
+    },
     {
       path: '/crop-photo',
       name: 'crop-photo',
