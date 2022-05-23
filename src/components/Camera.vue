@@ -20,11 +20,22 @@
       <b-icon pack="fas" icon="sync-alt" />
     </button>
     <div class="photo-button-container">
-      <button class="button photo-button" style="margin-right: 10px" @click="TakePhoto">
+      <button
+        class="button photo-button"
+        style="margin-right: 10px"
+        @click="TakePhoto"
+      >
         <b-icon pack="fas" icon="camera" />
       </button>
-      <button class="button photo-button" @click="ReTakePhoto">
+      <button
+        class="button photo-button"
+        style="margin-right: 10px"
+        @click="ReTakePhoto"
+      >
         <b-icon pack="fas" icon="sync-alt" />
+      </button>
+      <button class="button photo-button" @click="Send">
+        <b-icon pack="fas" icon="paper-plane" />
       </button>
     </div>
     <!-- <photos-gallery class="gallery" :photos="photos" />
@@ -34,6 +45,8 @@
 
 <script>
 // import PhotosGallery from "./PhotosGallery.vue";
+import $ from 'jquery';
+import axios from 'axios';
 export default {
   components: {
     // PhotosGallery,
@@ -46,10 +59,11 @@ export default {
       facingMode: "environment",
       counter: 0,
       switchingCamera: false,
+      api_key:'Lql13ivF1XRBkXLNNnYbTQ==cYtKD5yHakflIJ7E',
     };
   },
   methods: {
-    ReTakePhoto(){
+    ReTakePhoto() {
       this.photo = null;
     },
     async StartRecording(facingMode) {
@@ -61,7 +75,17 @@ export default {
       video.srcObject = this.mediaStream;
       return await video.play();
     },
-
+    DataURLToFile(dataurl, filename) {
+      var arr = dataurl.split(","),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, { type: mime });
+    },
     async TakePhoto() {
       let video = this.$refs.video;
       let canva = this.$refs.canva;
@@ -78,13 +102,7 @@ export default {
       } else {
         ctx.drawImage(video, 0, 0);
       }
-      this.photo = canva.toDataURL("image/jpeg");
-      // ctx.restore();
-
-      // this.photos.push({
-      //   id: this.counter++,
-      //   src: canva.toDataURL("image/png"),
-      // });
+      this.photo = this.DataURLToFile(canva.toDataURL(), "photo.png");
     },
     async switchCamera() {
       this.switchingCamera = true;
@@ -97,10 +115,18 @@ export default {
       );
       this.switchingCamera = false;
     },
-    cropSelectedPhoto(){
-      this.$store.dispatch('getCapturedPhotos', this.photos);
-      this.$router.push('/crop-photo');
-    }
+    Send() {
+      var formData = new FormData();
+      formData.append("image", this.picture);
+      axios.post('https://api.api-ninjas.com/v1/imagetotext', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'api-key': this.api_key,
+          'Accept': 'application/json',
+          'Allow-Origin': '*',
+        }
+      })
+    },
   },
 
   async mounted() {
