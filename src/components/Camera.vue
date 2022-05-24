@@ -65,6 +65,7 @@ export default {
       counter: 0,
       switchingCamera: false,
       api_key:'Lql13ivF1XRBkXLNNnYbTQ==cYtKD5yHakflIJ7E',
+      canva: null,
     };
   },
   methods: {
@@ -93,12 +94,12 @@ export default {
     },
     async TakePhoto() {
       let video = this.$refs.video;
-      let canva = this.$refs.canva;
+      this.canva = this.$refs.canva;
       let width = video.videoWidth;
       let height = video.videoHeight;
-      canva.width = width;
-      canva.height = height;
-      let ctx = canva.getContext("2d");
+      this.canva.width = width;
+      this.canva.height = height;
+      let ctx = this.canva.getContext("2d");
       ctx.save();
 
       if (this.facingMode === "user") {
@@ -107,7 +108,7 @@ export default {
       } else {
         ctx.drawImage(video, 0, 0);
       }
-      this.photo = this.DataURLToFile(canva.toDataURL(), "photo.png");
+      this.photo = this.DataURLToFile(this.canva.toDataURL(), "photo.png");
     },
     async switchCamera() {
       this.switchingCamera = true;
@@ -131,12 +132,18 @@ export default {
         }
       }).then(response => {
         this.loading = false;
-        this.$router.push({
-          name: 'getText',
-          params: {
-            data: response.data
-          }
+        let ctx = this.canva.getContext("2d");
+        let data = response.data;
+        data.forEach(element => {
+          ctx.strokeRect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
         });
+        
+        // this.$router.push({
+        //   name: 'getText',
+        //   params: {
+        //     data: response.data
+        //   }
+        // });
       }).catch(error => {
         this.loading = false;
         console.log(error);

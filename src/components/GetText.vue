@@ -1,7 +1,7 @@
 <template>
   <div class="container">
       <ul>
-          <li v-for="(txt, index) in data" :key="index">{{ txt.text }}</li>
+          <li v-for="(txt, index) in data" :key="index">{{ txt }}</li>
       </ul>
   </div>
 </template>
