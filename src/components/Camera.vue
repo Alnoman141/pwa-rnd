@@ -138,12 +138,14 @@ export default {
           ctx.beginPath();
           ctx.rect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
           ctx.stroke();
-          
+          // strock color can be change
+          ctx.font = "20px Arial";
+          ctx.fillStyle = "red";
           // add click event
           this.canva.addEventListener('click', (e) => {
             if (e.offsetX >= element.bounding_box.x1 && e.offsetX <= element.bounding_box.x2 && e.offsetY >= element.bounding_box.y1 && e.offsetY <= element.bounding_box.y2) {
-              this.counter++;
-              
+              // this.counter++;
+              this.ctx.fillStyle = 'green';
               // alert(index);
               this.canva.removeEventListener('click', (e) => {
                 if (e.offsetX >= element.bounding_box.x1 && e.offsetX <= element.bounding_box.x2 && e.offsetY >= element.bounding_box.y1 && e.offsetY <= element.bounding_box.y2) {

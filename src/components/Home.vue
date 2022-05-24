@@ -26,7 +26,7 @@
             </b-navbar-dropdown>
         </template>
 
-        <!-- <template #end>
+        <template #end>
             <b-navbar-item tag="div">
                 <div class="buttons">
                     <a class="button is-primary">
@@ -37,7 +37,7 @@
                     </a>
                 </div>
             </b-navbar-item>
-        </template> -->
+        </template>
     </b-navbar>
     <div class="center">
       <b-button tag="router-link" to="/take-photo" type="is-link">
