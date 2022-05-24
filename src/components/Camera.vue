@@ -134,8 +134,11 @@ export default {
         this.loading = false;
         let ctx = this.canva.getContext("2d");
         let data = response.data;
-        data.forEach(element => {
-          ctx.strokeRect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
+        data.forEach((element, index) => {
+          let box = ctx.strokeRect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
+          box.addEventListener('click', () => {
+            alert(' index =>', index);
+          });
         });
         
         // this.$router.push({
