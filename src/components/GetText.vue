@@ -1,7 +1,8 @@
 <template>
   <div class="container">
+      <h1>Get Seleted Texts</h1>
       <ul>
-          <li v-for="(txt, index) in data" :key="index">{{ txt }}</li>
+          <li v-for="(txt, index) in data" :key="index">{{ txt.text }}</li>
       </ul>
   </div>
 </template>

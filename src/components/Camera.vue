@@ -10,7 +10,9 @@
     <div v-show="photo">
       <canvas ref="canva" />
     </div>
-
+    <div class="selectedTxt">
+      <p v-for="(txt, index) in selectedTexts" :key="index">{{ txt.text }}</p>
+    </div>
     <button
       v-if="videoDevices.length > 1"
       class="button is-rounded is-outlined switch-button"
@@ -37,8 +39,11 @@
         <b-icon pack="fas" icon="camera" />
       </button>
       
-      <button v-if="photo && !loading" class="button photo-button" @click="Send">
+      <button v-if="photo && !loading" class="button photo-button" style="margin-right: 10px" @click="Send">
         <b-icon pack="fas" icon="paper-plane" />
+      </button>
+      <button v-if="selectedTexts.length > 0 && !loading" class="button photo-button" @click="Next">
+        <b-icon pack="fas" icon="arrow-right" />
       </button>
       <b-button type="is-dark" v-if="loading" loading>Sending</b-button>
     </div>
@@ -66,6 +71,7 @@ export default {
       switchingCamera: false,
       api_key:'Lql13ivF1XRBkXLNNnYbTQ==cYtKD5yHakflIJ7E',
       canva: null,
+      selectedTexts: [],
     };
   },
   methods: {
@@ -134,38 +140,56 @@ export default {
         this.loading = false;
         let ctx = this.canva.getContext("2d");
         let data = response.data;
+        let texts = [];
         data.forEach((element, index) => {
-          ctx.beginPath();
+          // make bounding box clickable
+          // ctx.beginPath();
           ctx.rect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
           ctx.stroke();
-          // strock color can be change
-          ctx.font = "20px Arial";
           ctx.fillStyle = "red";
+          ctx.font = "10px Arial";
+          
           // add click event
           this.canva.addEventListener('click', (e) => {
             if (e.offsetX >= element.bounding_box.x1 && e.offsetX <= element.bounding_box.x2 && e.offsetY >= element.bounding_box.y1 && e.offsetY <= element.bounding_box.y2) {
-              // this.counter++;
-              this.ctx.fillStyle = 'green';
-              // alert(index);
-              this.canva.removeEventListener('click', (e) => {
-                if (e.offsetX >= element.bounding_box.x1 && e.offsetX <= element.bounding_box.x2 && e.offsetY >= element.bounding_box.y1 && e.offsetY <= element.bounding_box.y2) {
-                  this.counter++;
+              ctx.fillText(element.text, element.bounding_box.x1, element.bounding_box.y1);
+              
+              let txt = {
+                index: index,
+                text: element.text,
+              }
+              if(texts.length < 0) {
+                texts.push(txt);
+              } else {
+                let found = false;
+                texts.forEach((text, idx) => {
+                  if(text.index == index) {
+                    found = true;
+                    ctx.fillText(element.text, 0, 0);
+                    texts.splice(idx, 1);
+                  }
+                });
+                if(!found) {
+                  texts.push(txt);
                 }
-              });
+              }
             }
           });
         });
+        this.selectedTexts = texts;
         
-        // this.$router.push({
-        //   name: 'getText',
-        //   params: {
-        //     data: response.data
-        //   }
-        // });
       }).catch(error => {
         this.loading = false;
         console.log(error);
       });
+    },
+    Next() {
+      this.$router.push({
+          name: 'getText',
+          params: {
+            data: this.selectedTexts,
+          }
+        });
     },
   },
 
@@ -188,7 +212,8 @@ export default {
   background-color: black;
   display: grid;
   width: auto;
-  /* height: 100vh; */
+  /* height: auto; */
+  height: 100vh;
   grid-template-columns: [left] 90vw [bs] 5vw [es] 5vw [right];
   grid-template-rows: [top] 5vh [bs] 5vh [es] 60vh [middle] 10vh [bottom] 20vh [end];
   justify-items: center;
@@ -196,11 +221,12 @@ export default {
 }
 
 .video {
-  height: auto;
-  grid-column: left/right;
-  grid-row: top / bottom;
+  /* grid-column: left/right;
+  grid-row: top / bottom; */
+  position: relative;
   user-select: none;
   max-width: unset;
+  max-height: unset;
 }
 
 .switch-button {
@@ -214,11 +240,15 @@ export default {
 }
 
 .photo-button-container {
-  grid-column: left / right;
-  grid-row: middle / bottom;
+  /* grid-column: left / right;
+  grid-row: middle / bottom; */
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 5;
-  width: 100vw;
-  height: 10vh;
+  /* width: 100vw; */
+  /* height: 10vh; */
   display: flex;
   justify-content: center;
 }
@@ -237,7 +267,18 @@ export default {
   grid-column: left / right;
   grid-row: bottom / end;
 }
-
+.selectedTxt {
+  position: absulute;
+  top: 0;
+  left: 0;
+  width: 108vh;
+  /* height: 10vh; */
+  background-color: rgba(0, 0, 0, 1);
+  z-index: 3;
+  color: white;
+  /* font-size: 4vh; */
+  box-sizing: content-box;
+}
 /* .camera-frame {
   width: 100vw;
   height: 80vh;
@@ -246,4 +287,7 @@ export default {
   justify-content: center;
   align-items: center;
 } */
+.selectedTxt p {
+  background-color: rgba(0, 0, 0, 1);
+}
 </style>
