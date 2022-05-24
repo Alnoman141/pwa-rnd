@@ -57,7 +57,7 @@ export default {
   },
   data() {
     return {
-      photo: null,
+      photo: "",
       loading: false,
       mediaStream: null,
       videoDevices: [],
@@ -135,9 +135,22 @@ export default {
         let ctx = this.canva.getContext("2d");
         let data = response.data;
         data.forEach((element, index) => {
-          let box = ctx.strokeRect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
-          box.addEventListener('click', () => {
-            alert(' index =>', index);
+          ctx.beginPath();
+          ctx.rect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
+          ctx.stroke();
+          
+          // add click event
+          this.canva.addEventListener('click', (e) => {
+            if (e.offsetX >= element.bounding_box.x1 && e.offsetX <= element.bounding_box.x2 && e.offsetY >= element.bounding_box.y1 && e.offsetY <= element.bounding_box.y2) {
+              this.counter++;
+              
+              // alert(index);
+              this.canva.removeEventListener('click', (e) => {
+                if (e.offsetX >= element.bounding_box.x1 && e.offsetX <= element.bounding_box.x2 && e.offsetY >= element.bounding_box.y1 && e.offsetY <= element.bounding_box.y2) {
+                  this.counter++;
+                }
+              });
+            }
           });
         });
         
