@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-      <h1>Get Seleted Texts</h1>
+      <h1>You Seleted:  </h1>
       <ul>
           <li v-for="(txt, index) in data" :key="index">{{ txt.text }}</li>
       </ul>
@@ -26,5 +26,9 @@ export default {
 .container {
     width: 80%;
     margin: 0 auto;
+}
+h1 {
+    font-weight: 900;
+    font-size: 32px;
 }
 </style>

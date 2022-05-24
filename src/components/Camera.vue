@@ -1,61 +1,73 @@
 <template>
-  <div class="wrapper camera-frame">
-    <!-- {{ photo }} -->
-    <video
-      v-show="!photo"
-      class="video"
-      :class="facingMode === 'user' ? 'front' : ''"
-      ref="video"
-    />
-    <div v-show="photo">
-      <canvas ref="canva" />
-    </div>
-    <div class="selectedTxt">
+  <div>
+    <div class="selectedTxt" v-if="selectedTexts.length > 0">
       <p v-for="(txt, index) in selectedTexts" :key="index">{{ txt.text }}</p>
     </div>
-    <button
-      v-if="videoDevices.length > 1"
-      class="button is-rounded is-outlined switch-button"
-      @click="switchCamera"
-      :disabled="switchingCamera"
-    >
-      <b-icon pack="fas" icon="sync-alt" />
-    </button>
-    <div class="photo-button-container">
+    <div class="wrapper camera-frame">
+      <!-- {{ photo }} -->
+      <video
+        v-show="!photo"
+        class="video"
+        :class="facingMode === 'user' ? 'front' : ''"
+        ref="video"
+      />
+      <div v-show="photo">
+        <canvas ref="canva" />
+      </div>
+
       <button
-        v-if="!loading"
-        class="button photo-button"
-        style="margin-right: 10px"
-        @click="ReTakePhoto"
+        v-if="videoDevices.length > 1"
+        class="button is-rounded is-outlined switch-button"
+        @click="switchCamera"
+        :disabled="switchingCamera"
       >
         <b-icon pack="fas" icon="sync-alt" />
       </button>
-      <button
-        v-if="!loading"
-        class="button photo-button"
-        style="margin-right: 10px"
-        @click="TakePhoto"
-      >
-        <b-icon pack="fas" icon="camera" />
-      </button>
-      
-      <button v-if="photo && !loading" class="button photo-button" style="margin-right: 10px" @click="Send">
-        <b-icon pack="fas" icon="paper-plane" />
-      </button>
-      <button v-if="selectedTexts.length > 0 && !loading" class="button photo-button" @click="Next">
-        <b-icon pack="fas" icon="arrow-right" />
-      </button>
-      <b-button type="is-dark" v-if="loading" loading>Sending</b-button>
-    </div>
-    <!-- <photos-gallery class="gallery" :photos="photos" />
+      <div class="photo-button-container">
+        <button
+          v-if="!loading"
+          class="button photo-button"
+          style="margin-right: 10px"
+          @click="ReTakePhoto"
+        >
+          <b-icon pack="fas" icon="sync-alt" />
+        </button>
+        <button
+          v-if="!loading"
+          class="button photo-button"
+          style="margin-right: 10px"
+          @click="TakePhoto"
+        >
+          <b-icon pack="fas" icon="camera" />
+        </button>
+
+        <button
+          v-if="photo && !loading"
+          class="button photo-button"
+          style="margin-right: 10px"
+          @click="Send"
+        >
+          <b-icon pack="fas" icon="paper-plane" />
+        </button>
+        <button
+          v-if="selectedTexts.length > 0 && !loading"
+          class="button photo-button"
+          @click="Next"
+        >
+          <b-icon pack="fas" icon="arrow-right" />
+        </button>
+        <b-button type="is-dark" v-if="loading" loading>Sending</b-button>
+      </div>
+      <!-- <photos-gallery class="gallery" :photos="photos" />
     <button class="button is-rounded is-outlined" @click="cropSelectedPhoto">Crop</button> -->
+    </div>
   </div>
 </template>
 
 <script>
 // import PhotosGallery from "./PhotosGallery.vue";
-import $ from 'jquery';
-import axios from 'axios';
+import $ from "jquery";
+import axios from "axios";
 export default {
   components: {
     // PhotosGallery,
@@ -69,7 +81,7 @@ export default {
       facingMode: "environment",
       counter: 0,
       switchingCamera: false,
-      api_key:'Lql13ivF1XRBkXLNNnYbTQ==cYtKD5yHakflIJ7E',
+      api_key: "Lql13ivF1XRBkXLNNnYbTQ==cYtKD5yHakflIJ7E",
       canva: null,
       selectedTexts: [],
     };
@@ -131,65 +143,77 @@ export default {
       this.loading = true;
       let formData = new FormData();
       formData.append("image", this.photo);
-      axios.post('https://api.api-ninjas.com/v1/imagetotext', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'X-Api-Key': this.api_key,
-        }
-      }).then(response => {
-        this.loading = false;
-        let ctx = this.canva.getContext("2d");
-        let data = response.data;
-        let texts = [];
-        data.forEach((element, index) => {
-          // make bounding box clickable
-          // ctx.beginPath();
-          ctx.rect(element.bounding_box.x1, element.bounding_box.y1, element.bounding_box.x2 - element.bounding_box.x1, element.bounding_box.y2 - element.bounding_box.y1);
-          ctx.stroke();
-          ctx.fillStyle = "red";
-          ctx.font = "10px Arial";
-          
-          // add click event
-          this.canva.addEventListener('click', (e) => {
-            if (e.offsetX >= element.bounding_box.x1 && e.offsetX <= element.bounding_box.x2 && e.offsetY >= element.bounding_box.y1 && e.offsetY <= element.bounding_box.y2) {
-              ctx.fillText(element.text, element.bounding_box.x1, element.bounding_box.y1);
-              
-              let txt = {
-                index: index,
-                text: element.text,
-              }
-              if(texts.length < 0) {
-                texts.push(txt);
-              } else {
-                let found = false;
-                texts.forEach((text, idx) => {
-                  if(text.index == index) {
-                    found = true;
-                    ctx.fillText(element.text, 0, 0);
-                    texts.splice(idx, 1);
-                  }
-                });
-                if(!found) {
+      axios
+        .post("https://api.api-ninjas.com/v1/imagetotext", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-Api-Key": this.api_key,
+          },
+        })
+        .then((response) => {
+          this.loading = false;
+          let ctx = this.canva.getContext("2d");
+          let data = response.data;
+          let texts = [];
+          data.forEach((element, index) => {
+            // make bounding box clickable
+            // ctx.beginPath();
+            ctx.rect(
+              element.bounding_box.x1,
+              element.bounding_box.y1,
+              element.bounding_box.x2 - element.bounding_box.x1,
+              element.bounding_box.y2 - element.bounding_box.y1
+            );
+            ctx.stroke();
+            ctx.fillStyle = "red";
+            ctx.font = "10px Arial";
+
+            // add click event
+            this.canva.addEventListener("click", (e) => {
+              if (
+                e.offsetX >= element.bounding_box.x1 &&
+                e.offsetX <= element.bounding_box.x2 &&
+                e.offsetY >= element.bounding_box.y1 &&
+                e.offsetY <= element.bounding_box.y2
+              ) {
+                // ctx.fillText(element.text, element.bounding_box.x1, element.bounding_box.y1);
+
+                let txt = {
+                  index: index,
+                  text: element.text,
+                };
+                if (texts.length < 0) {
                   texts.push(txt);
+                } else {
+                  let found = false;
+                  texts.forEach((text, idx) => {
+                    if (text.index == index) {
+                      found = true;
+                      ctx.fillText(element.text, 0, 0);
+                      texts.splice(idx, 1);
+                    }
+                  });
+                  if (!found) {
+                    texts.push(txt);
+                  }
                 }
               }
-            }
+            });
           });
+          this.selectedTexts = texts;
+        })
+        .catch((error) => {
+          this.loading = false;
+          console.log(error);
         });
-        this.selectedTexts = texts;
-        
-      }).catch(error => {
-        this.loading = false;
-        console.log(error);
-      });
     },
     Next() {
       this.$router.push({
-          name: 'getText',
-          params: {
-            data: this.selectedTexts,
-          }
-        });
+        name: "getText",
+        params: {
+          data: this.selectedTexts,
+        },
+      });
     },
   },
 
@@ -212,8 +236,9 @@ export default {
   background-color: black;
   display: grid;
   width: auto;
+  height: auto;
   /* height: auto; */
-  height: 100vh;
+  /* height: 100vh; */
   grid-template-columns: [left] 90vw [bs] 5vw [es] 5vw [right];
   grid-template-rows: [top] 5vh [bs] 5vh [es] 60vh [middle] 10vh [bottom] 20vh [end];
   justify-items: center;
@@ -268,16 +293,16 @@ export default {
   grid-row: bottom / end;
 }
 .selectedTxt {
-  position: absulute;
+  /* position: absulute;
   top: 0;
   left: 0;
   width: 108vh;
-  /* height: 10vh; */
+  height: 10vh;
   background-color: rgba(0, 0, 0, 1);
   z-index: 3;
   color: white;
-  /* font-size: 4vh; */
-  box-sizing: content-box;
+  font-size: 4vh;
+  box-sizing: content-box; */
 }
 /* .camera-frame {
   width: 100vw;
@@ -288,6 +313,7 @@ export default {
   align-items: center;
 } */
 .selectedTxt p {
+  color: #fff;
   background-color: rgba(0, 0, 0, 1);
 }
 </style>
