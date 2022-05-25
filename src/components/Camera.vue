@@ -1,7 +1,8 @@
 <template>
   <div>
+    
     <div class="selectedTxt" v-if="selectedTexts.length > 0">
-      <p v-for="(txt, index) in selectedTexts" :key="index">{{ txt.text }}</p>
+      <p>Your Selected string is: {{ selectedTexts.map((text) => text.text).join(" ") }} </p>
     </div>
     <div class="wrapper camera-frame">
       <!-- {{ photo }} -->
@@ -208,11 +209,21 @@ export default {
         });
     },
     Next() {
-      this.$router.push({
-        name: "getText",
-        params: {
-          data: this.selectedTexts,
-        },
+      this.loading = true;
+      let searchStr = this.selectedTexts.map((text) => text.text).join(" ");
+      axios.post('http://13.235.242.44/api/v1/search', {
+        search: searchStr
+      }).then((response) => {
+        this.loading = false;
+          this.$router.push({
+          name: "getText",
+          params: {
+            data: response.data,
+          },
+        });
+      }). catch((error) => {
+        this.loading = false;
+        console.log(error);
       });
     },
   },
